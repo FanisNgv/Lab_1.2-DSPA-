@@ -14,18 +14,27 @@ bool isempty()
         return false;
 }
 
+bool isfull()
+{
+    if ((rear+1)%SIZE == front)
+        return true;
+    else
+        return false;
+}
+
 void enqueue(int value)
 {
-    if (rear == SIZE - 1)
+    if (isfull())
     {
-        std::cout << "Queue is already full" << std::endl;
+        std::cout << "Очередь полна" << std::endl;
     }
     else
     {
-        if (front == -1)
+        if (front == -1) 
             front = 0;
-        rear++;
+        rear = (rear + 1) % SIZE;
         A[rear] = value;
+
     }
 }
 
@@ -33,14 +42,16 @@ void dequeue()
 {
     if (isempty())
     {
-        std::cout << "Queue is already empty" << std::endl;
+        std::cout << "Очередь уже пуста" << std::endl;
     }
     else
     {
-        if (front == rear) // случай, когда оба равны нулю (всего один элемент)
+        if (front == rear)      //добавили один элемент и удалили
             front = rear = -1;
-        else
-            front++;
+        else {
+            front = (front + 1) % SIZE;
+        }
+
     }
 }
 
@@ -48,39 +59,75 @@ void ShowFront()
 {
     if (isempty())
     {
-        std::cout << "Queue is empty" << std::endl;
+        std::cout << "Очередь пуста" << std::endl;
     }
     else
-        std::cout << "First element: " << A[front] << std::endl;
+        std::cout << "Первый элемент: " << A[front] << std::endl;
 }
 
 void ShowQueue()
 {
     if (isempty())
     {
-        std::cout << "Queue is empty" << std::endl;
+        std::cout << "Очередь пуста" << std::endl;
+    }
+    else if (front == rear)
+    {
+        std::cout << A[0] << " " << std::endl;
     }
     else
     {
-        for (int i = front; i <= rear; i++)
+        for (int i = front; i != rear; i = (i + 1) % SIZE)
         {
-            std::cout << A[i] << std::endl;
+            std::cout << A[i] << " ";
+
+            if ((i + 1)%SIZE == rear)
+            {
+                std::cout << A[(i + 1)%SIZE] << " ";
+            }
         }
+        std::cout << std::endl;
+            
     }
 }
 
 int main()
 {
-    enqueue(16);
-    isempty();
-    enqueue(12);
-    ShowFront();
-    ShowQueue();
-    enqueue(4);
-    enqueue(46);
-    enqueue(2257);
-    enqueue(534);
-    ShowQueue();
+    setlocale(LC_ALL, "rus");
+    srand(time(NULL));
 
+    char choice;
+
+    while (true)
+    {
+        std::cout <<
+            "1-добавить новый элемент\n"
+            "2-удалить элемент\n"
+            "q-выход из цикла\n";
+
+        while ((!(std::cin >> choice) || (std::cin.peek() != '\n')))
+        {
+            std::cin.clear();
+            while (std::cin.get() != '\n');
+            std::cout << "ошибка!" << std::endl;
+        }
+        if (choice == '1')
+        {
+            enqueue(rand() % 101);
+        }
+        else if (choice == '2')
+        {
+            dequeue();
+        }
+        else if (choice == 'q')
+        {
+            break;
+        }
+        else
+        {
+            std::cout << "Введите символ из предоставленного списка!" << std::endl;
+        }
+        ShowQueue();
+    }
 }
 
